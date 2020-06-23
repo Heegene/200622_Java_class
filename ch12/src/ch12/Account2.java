@@ -10,7 +10,7 @@ public class Account2 { // thread 상속받아 만든 클래스
 		
 	}
 	// 예금 
-	synchronized void deposit(int amt, String name) {
+	void deposit(int amt, String name) {
 		total += amt;
 		System.out.println(name + "예금 : " + amt);
 	}
