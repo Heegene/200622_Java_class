@@ -319,7 +319,7 @@ FROM emp;
 
 
 -- 11. join
-
+COUNT(ename)
 
 
 
