@@ -148,6 +148,179 @@ WHERE deptno = 101;
 
 
 -- MOD 예제
+SELECT name, sal, comm, MOD(sal,comm)
+FROM professor;
+
+-- CEIL, FLOOR 예제
+SELECT CEIL(19.7), FLOOR(12.567) FROM dual;
+
+
+-- 날짜 더하기 예제(30일 뒤, 60일 뒤) 
+SELECT name, hiredate, hiredate + 30, hiredate + 60
+FROM professor;
+
+-- SYSDATE 예제
+SELECT sysdate from dual;
+
+-- 10년 미만 근속자 정보 확인 
+SELECT profno, hiredate, name,
+TRUNC(MONTHS_BETWEEN (sysdate, hiredate)) AS tenure ,
+ADD_MONTHS(hiredate, 6) AS review
+FROM Professor
+WHERE MONTHS_BETWEEN (sysdate, hiredate) < 120;
+
+
+-- LASTDAY 예제
+SELECT sysdate, LAST_DAY(sysdate), NEXT_DAY(sysdate, '금') from dual;
+--lastday는 해당 월의 마지막 날 계산, next_day는 돌아오는 다음 일요일 날짜 리턴
+
+
+-- 날짜 ROUND, TRUNC 예제
+SELECT TO_CHAR(sysdate, 'YY/MM/DD HH24:MI:SS') AS normal,
+       TO_CHAR(TRUNC(sysdate), 'YY/MM/DD HH24:MI:SS') AS trunc, 
+       -- 버림해서 26일 0시 0분 반환
+       TO_CHAR(ROUND(sysdate), 'YY/MM/DD HH24:MI:SS') AS round
+       -- 반올림해서(12시 지났으므로) 27일 0시 0분 반환 
+FROM dual;
+
+
+-- 날짜 출력형식 변환
+SELECT TO_CHAR(hiredate, 'YY/MM/DD') AS normal,
+       TO_CHAR(ROUND(hiredate, 'dd'), 'YY/MM/DD') AS round_dd, 
+       -- dd(날짜기준으로 round 처리) 시간단위로 일 반올림
+       TO_CHAR(ROUND(hiredate, 'mm'), 'YY/MM/DD') AS round_mm,
+       -- mm 월기준 round 처리 일단위로 월 반올림
+       TO_CHAR(ROUND(hiredate, 'yy'), 'YY/MM/DD') AS round_yy
+       -- yy 연기준 round 처리 월단위로 연 반올림 
+FROM professor;
+
+-- 날짜 출력형식 변환 예제
+SELECT name, studno, TO_CHAR(birthdate, 'YYMM') from student;
+
+
+SELECT name, studno, 
+CONCAT(CONCAT(TO_CHAR(birthdate, 'YY'),'년'),(CONCAT(TO_CHAR(birthdate, 'MM'),'월')))
+from student;
+-- 내가 했지만 이건 너무 강제적인 방법이라 다른 방식을 찾아봄
+ 
+SELECT name, studno, TO_CHAR(birthdate,'YYYY"년"MM"월"DD"일"') birDay
+from student;
+-- 서식을 "" double quotation 처리해 주면 됨 
+
+-- 시간표현의 다른 방식
+SELECT name, TO_CHAR(hiredate, 'MONTH DD, YYYY HH24:MI:SS PM') AS 입사일
+FROM professor;
+-- 1월 24, 1982 13:00:00 오후 이렇게 출력됨 
+
+-- 연봉 계산 (n,nnn 이렇게 구분자 넣는 숫자형식) 
+SELECT name, sal, comm, TO_CHAR((sal+comm)*12, '99,999')
+FROM professor;
 
 
 
+--
+SELECT TO_NUMBER('1') 숫자 FROM dual;
+-- SELECT TO_NUMBER('*') 특수문자 FROM dual; 에러 발생
+-- 숫자변환은 숫자형 문자열이어야 변환 가능 
+
+
+-- 월급 계산 (null 일 경우 NVL을 이용하여 대체값 부여)
+SELECT name, position, sal, comm, sal+comm, sal+NVL(comm, 0), NVL(sal+comm, sal) s2
+from professor;
+
+-- NVL2 예제 NVL2(exp 1, exp2, exp3) null 아니면 exp2출력, 맞으면 exp3출력
+SELECT name, position, sal, comm, NVL2(comm, sal+comm, sal) AS 월급여
+FROM professor;
+
+
+-- NULLIF 예제
+SELECT NVL(NULLIF('A','A'), '널값') FROM dual; -- '널값' 반환 
+SELECT NVL(NULLIF('A','B'), '널값') FROM dual; -- 그냥 A 반환
+
+-- COALESCE 함수
+SELECT name, comm, sal, COALESCE(comm, sal, 0) from professor;
+
+
+-- DECODE 함수 예제
+SELECT name, deptno, 
+      DECODE (deptno, 
+               101, '컴퓨터공학과'
+              ,102, '멀티미디어학과'
+              ,201, '이콩이미용학과'
+              ,     '해당되는게없는학과') AS 콩이대학과
+FROM professor;
+
+-- CASE 함수 예제
+SELECT name, deptno, sal,
+      CASE WHEN DEPTNO = 101 THEN sal*0.1
+           WHEN DEPTNO = 102 THEN sal*0.2
+           WHEN DEPTNO = 201 THEN sal*0.3
+           ELSE 0
+      END 상여금 -- 이 컬럼명으로 계산값이 들어감
+FROM professor;
+
+
+-- EXERCISE --
+--1.
+SELECT UPPER(ename), LOWER(ename), INITCAP(ename)
+FROM emp;
+
+--2.
+SELECT ename, job, SUBSTR(job, 2,4)
+FROM emp;
+
+-- 3.
+SELECT ename, LPAD(ename,10,'#') FROM emp;
+
+--4.  주의사항: 문자열 값 비교할땐 대소문자 주의 
+SELECT ename, job,
+DECODE(job, 'MANAGER', '관리자')
+FROM emp;
+
+--5.
+SELECT ename, ROUND(sal/7), ROUND(sal/7, 1), ROUND(sal/7, -1)
+from emp;
+
+--7.
+SELECT ename, ROUND(sal/7), TRUNC(sal/7), CEIL(sal/7), FLOOR(sal/7)
+FROM emp;
+
+--8.
+SELECT ename, sal, MOD(sal, 7)
+FROM emp;
+
+--9.
+SELECT ename, sal, hiredate, 
+TRUNC(MONTHS_BETWEEN(sysdate, hiredate)) AS 개월차,
+TRUNC(MONTHS_BETWEEN(sysdate, hiredate)/12,0) AS 년,
+TRUNC(MOD(MONTHS_BETWEEN(sysdate, hiredate)/12,1)*12,0) AS 월,
+ROUND(MOD(MOD(MONTHS_BETWEEN(sysdate, hiredate)/12,1)*12,1)*(365/12),0) AS 일
+FROM emp;
+
+--10.
+SELECT empno, ename, job, sal,
+    CASE WHEN job = 'CLERK'    THEN sal*1.1
+         WHEN job = 'ANALYST'  THEN sal*1.2
+         WHEN job = 'MANAGER'  THEN sal*1.3
+         WHEN job = 'SALESMAN' THEN sal*1.5
+         ELSE sal*1.6
+         END 인상급여
+FROM emp;
+
+--10. DECODE문
+SELECT empno, ename, job, sal,
+      DECODE (job,
+          'CLERK',      sal*1.1
+        , 'ANALYST',    sal*1.2
+        , 'MANAGER',    sal*1.3
+        , 'SALESMAN',   sal*1.5
+        , sal*1.6) AS 인상급여
+FROM emp;
+
+
+-- 11. join
+
+
+
+
+      
