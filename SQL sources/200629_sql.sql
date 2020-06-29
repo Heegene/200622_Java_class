@@ -234,6 +234,29 @@ WHERE position = '전임강사';
 -- 3. 서브쿼리
 SELECT name, position
 FROM professor
-WHERE position = (SELECT position FROM professor WHERE name = '전은지');
+WHERE position = (
+                  SELECT position
+                  FROM professor
+                  WHERE name = '전은지'
+                  );
 
-
+-- 사용자 아이디가 'jun123'인 학생과 같은 학년인
+-- 학생의 학번, 이름, 학년 출력 
+SELECT studno, name, grade
+FROM student
+WHERE grade = (
+                SELECT grade
+                FROM student
+                WHERE userid = 'jun123'
+                );
+                
+                
+-- 101번 학과 학생들의 평균 몸무게보다
+-- 몸무게가 적은 학생의 이름, 학과번호, 몸무게 출력 
+SELECT name, deptno, weight
+FROM student
+WHERE weight < (
+                SELECT AVG(weight)
+                FROM student
+                WHERE deptno = 101
+                );
