@@ -389,4 +389,59 @@ AND
                   -- 해당됨
                   -- 1,2,3,4중에 하나이고 몸무게는 42,52,70,72 중 하나이면
                   -- 해당됨 
-        
+
+
+-- 상호 연관 서브쿼리
+-- 각 학과 학생의 평균키보다 큰 학생의 이름, 학과번호, 키 출력
+SELECT name, deptno, height
+FROM   student s1
+WHERE  height > ( SELECT AVG(height) -- 이부분만 따로 실행시키면 실행X
+                  FROM student s2
+                  WHERE s2.deptno = s1.deptno )
+ORDER BY deptno
+;
+-- 1. 메인쿼리에서 학생 테이블의 정보를 서브쿼리로 전달(deptno 빼서 서브쿼리 전달)
+-- 2. 메인쿼리에서 전달받은 학과번호로 평균키를 계산함(서브쿼리 수행)
+-- 3. 메인쿼리에서 해당학과 평균키보다 큰 학생의 이름, 학과번호, 키 반환
+
+
+-- 학과별 최소키 보다 큰 학생의 이름, 학과번호ㅡ 학번,
+-- 키를 출력하는 JDBC 프로그램을 작성하시오.
+
+
+SELECT name, deptno, studno, height
+FROM student s1 -- 학생 테이블에서 
+WHERE height > ( SELECT MIN(height) -- 학생 테이블의 최소값 호출
+                 FROM student s2
+                 WHERE s1.deptno = s2.deptno -- deptno 로 sync
+                 )
+                 ;
+                 
+                 
+                 
+SELECT ename, hiredate
+FROM EMP
+WHERE deptno = ( SELECT deptno
+                 FROM emp
+                 WHERE INITCAP(ename) = 'Blake'
+                 )
+                 ;
+                 
+SELECT empno, ename
+FROM EMP
+WHERE sal > ( SELECT AVG(sal)
+              FROM emp
+              )
+ORDER BY sal DESC;
+                 
+                 
+-- 부서번호와 급여가 보너스를 받는 어떤 사원의 부서 번호와 급여에 일치하는
+-- 사원의 이름, 부서번호, 그리고 급여를 디스플레이
+
+SELECT ename, deptno, sal
+FROM emp
+WHERE comm >= ANY (SELECT comm
+                 FROM emp
+                 WHERE comm IS NOT NULL
+                 );
+
