@@ -440,8 +440,115 @@ ORDER BY sal DESC;
 
 SELECT ename, deptno, sal
 FROM emp
-WHERE comm >= ANY (SELECT comm
+WHERE comm = ANY (SELECT comm
                  FROM emp
                  WHERE comm IS NOT NULL
                  );
+
+
+SELECT ename, deptno, sal
+FROM emp
+WHERE (deptno, sal) IN
+                (SELECT deptno, sal
+                 FROM emp
+                 WHERE comm IS NOT NULL
+                 );
+
+-- 1. 회사전체 급여합계, 급여평균, 인원수[emp Table]
+
+SELECT SUM(sal), ROUND(AVG(sal)), COUNT(*)
+FROM emp;
+
+-- 2. 부서코드별  급여합계, 급여평균[emp Table]
+SELECT deptno, SUM(sal), ROUND(AVG(sal))
+FROM emp
+GROUP BY deptno;
+
+-- 3. job별 최대급여, 최소급여, 인원수[emp Table]
+SELECT job, MAX(sal), MIN(sal), COUNT(*)
+FROM emp
+GROUP BY job;
+
+
+-- 4. comm이 null이 아닌 사람의 부서코드별 급여합계,최대급여,인원수[emp Table]
+SELECT deptno, SUM(sal), MAX(sal), COUNT(comm)
+FROM emp
+GROUP BY deptno;
+
+
+-- 5. 부서명별 급여합계, 최소급여, 인원수[emp Table]
+SELECT deptno, SUM(sal), MIN(sal), COUNT(*)
+FROM emp
+GROUP BY deptno;
+
+
+-- 6. 부서코드,근무지별 급여합계,최대급여, 인원수[emp Table  / dept Table]
+SELECT e.deptno, d.LOC, SUM(e.sal), MAX(e.sal), COUNT(*)
+FROM emp e, dept d
+WHERE e.deptno = d.deptno
+GROUP BY (e.deptno, d.LOC)
+ORDER BY e.deptno;
+
+
+
+-- 7. 부서명,업무별  급여합계,최대급여,인원수[emp Table  / dept Table]
+SELECT d.dname, e.job, SUM(e.sal), MAX(e.sal), COUNT(*) 
+FROM emp e, dept d
+WHERE e.deptno = d.deptno
+GROUP BY d.dname, e.job;
+
+
+
+
+-- 8. 가장 먼저 입사한 사람의 이름, 급여. 입사일 [emp Table]
+SELECT ename, sal, hiredate
+FROM emp
+WHERE hiredate = ( SELECT MIN(hiredate)
+                   FROM emp
+                   );
+                  
+
+-- 9. 회사에서 가장 급여가 적은 사람의 이름, 급여 [emp Table]
+SELECT ename, sal
+FROM emp
+WHERE sal = (SELECT MIN(sal)
+             FROM emp
+             );
+
+ 
+-- 11. 회사평균 이하의 급여를 받는 사람의 이름, 급여, 부서명  [emp Table  / dept Table]
+SELECT e.ename, e.sal, d.dname
+FROM emp e, dept d
+WHERE e.deptno = d.deptno
+AND sal < (SELECT AVG(sal)
+             FROM emp
+             );
+
+
+-- 12. MARTIN보다 먼저 입사한 사람의 이름, 급여, 입사일, 급여 등급  
+-- [emp Table  / salgrade Table]
+-- 급여등급 다 초과해서 그냥 comm 기준으로 급여등급 잡았음 
+
+SELECT e.ename, e.sal, e.hiredate, s.grade
+FROM emp e, salgrade s
+WHERE e.comm BETWEEN s.losal and s.hisal
+AND
+hiredate < (SELECT hiredate
+            from emp
+            WHERE INITCAP(ename) = 'Martin');
+
+
+
+
+-- 13. 평균 급여 이상을 받는 모든 사원에 대해서 사원 번호와 이름을
+-- 디스플레이하는 질의문을 생성하라. 단 출력은 급여 내림차순 정렬하라
+
+SELECT empno, ename
+FROM emp
+WHERE sal >=  ( SELECT AVG(sal)
+              FROM emp
+              )
+ORDER BY sal DESC;
+
+
 
