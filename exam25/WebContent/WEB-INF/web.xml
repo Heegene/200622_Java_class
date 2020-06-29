@@ -19,4 +19,14 @@
     <servlet-name>TenServelet</servlet-name>
     <url-pattern>/ttt</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>HeaderServlet</display-name>
+    <servlet-name>HeaderServlet</servlet-name>
+    <servlet-class>HeaderServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>HeaderServlet</servlet-name>
+    <url-pattern>/header</url-pattern>
+  </servlet-mapping>
 </web-app>
