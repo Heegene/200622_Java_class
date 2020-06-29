@@ -260,3 +260,133 @@ WHERE weight < (
                 FROM student
                 WHERE deptno = 101
                 );
+                
+                
+SELECT name, grade, height
+FROM student
+WHERE grade = (
+               SELECT grade
+               FROM student
+               WHERE studno = 20101
+               )
+AND
+height > (
+          SELECT height
+          FROM student
+          WHERE studno = 20101
+          )
+          ;
+                  
+          
+-- 다중행 서브쿼리
+-- IN 예제
+SELECT name, grade, deptno
+FROM student
+WHERE deptno IN (
+                 SELECT deptno
+                 FROM department
+                 WHERE college = 100
+                 );
+                 -- 단과대학 100의 department 소속 학생들의 이름, 학년, 학과 
+
+
+-- ANY 연산자 예제
+SELECT studno, name, height
+FROM student
+WHERE height > ANY (
+                    SELECT height
+                    FROM student
+                    WHERE grade = 4
+                    );
+                    -- 4학년 학생 중 아무나 한 명보다 키가 크면 해당 
+                    
+-- ALL 예제             
+SELECT studno, name, height
+FROM student
+WHERE height > ALL (
+                    SELECT height
+                    FROM student
+                    WHERE grade = 4
+                    );
+                    -- 4학년 학생들 모두의 키보다 키가 커야 함
+                    -- 최대값이 177이므로 최대값보다 큰 경우 true 
+
+-- EXISTS 예제
+SELECT profno, name, sal, comm
+FROM   professor
+WHERE  EXISTS ( -- 하나라도 존재 하면 메인에서 select
+               SELECT position
+               FROM professor
+               WHERE comm IS NOT NULL
+               -- comm을 받는 사람이 있기 때문에 전체가 다 뿌려짐 
+               -- 전체를 실행 시키느냐 마느냐 하는 문제
+               );
+
+
+-- NOT EXISTS 예제
+SELECT profno, name, sal, comm
+FROM   professor
+WHERE  NOT EXISTS ( 
+               SELECT position
+               FROM professor
+               WHERE comm IS NOT NULL
+               -- 모든게 null이 아닌 이상 돌아가지 않음
+               -- 빠른 판단을 위해 사용하므로
+               -- 성능개선에 좋음 
+               );
+               
+-- 한 명이라도 보직수당을 받으면 전체 교수의 번호,이름,수당,급여+보직수당         
+SELECT profno, name, comm, sal+NVL(comm,0) AS 합계
+FROM professor
+WHERE EXISTS (
+              SELECT comm
+              FROM professor
+              WHERE comm IS NOT NULL
+              );
+
+
+SELECT 1
+FROM student
+WHERE NOT EXISTS (
+                  SELECT userid
+                  FROM student
+                  WHERE userid = 'goodstudent'
+                  );
+                  
+SELECT 1 userid_exist 
+FROM dual
+WHERE NOT EXISTS ( 
+                  SELECT userid
+                  FROM student
+                  WHERE userid = 'goodstudent'
+                  );
+                  
+                  
+-- 다중컬럼 서브쿼리(PAIRWISE)
+SELECT name, grade, weight 
+FROM student
+WHERE (grade, weight) IN (-- 학년별 최소몸무게를 구함 
+                          SELECT grade, MIN(weight)
+                          FROM student
+                          GROUP BY grade
+                          -- grade로 묶은다음 MIN 과 비교
+                          );
+-- 학년별 최소 몸무게를 가진 학생의 이름, 학년, 몸무게 반환됨
+
+
+-- 다중컬럼 서브쿼리(UNPAIRWISE)
+SELECT name, grade, weight 
+FROM student
+WHERE grade IN ( SELECT grade
+                 FROM student
+                 GROUP BY grade
+                 ) -- 1,2,3,4 학년 중 하나이면서 
+AND
+      weight IN ( SELECT MIN(weight)
+                  FROM student
+                  GROUP BY grade
+                  ); -- 최소 몸무게에 해당하면 (MIN weight에 있던 값)
+                  -- 해당됨
+                  -- 1,2,3,4중에 하나이고 몸무게는 42,52,70,72 중 하나이면
+                  -- 해당됨 
+        
