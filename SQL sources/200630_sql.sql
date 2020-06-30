@@ -185,12 +185,136 @@ WHERE deptno = (SELECT deptno
   
 rollback;
 
+-- MERGE 예제
 
+-- 테이블 생성
 CREATE TABLE professor_temp
 AS           SELECT *
              FROM professor
              WHERE position = '교수';
 
+-- 교수를 명예교수로 변경
 UPDATE professor_temp
 SET position = '명예교수'
 WHERE position = '교수';
+
+-- 테이블 생성 후 INSERT
+INSERT INTO professor_temp
+Values(9999, '김도경', 'arom21', '전임강사', 200, SYSDATE, 10, 101);
+
+-- MERGE
+MERGE INTO professor p
+USING professor_temp f
+ON(p.profno = f.profno) -- ON의 전제하에 MERGE
+WHEN MATCHED THEN -- 매칭이 되면
+UPDATE -- 업데이트
+SET p.position = f.position
+WHEN NOT MATCHED THEN -- PK가 매칭이 되지 않으면
+INSERT -- 삽입하라
+VALUES (f.profno, f.name, f.userid, f.position, f.sal, f.hiredate, f.comm, f.deptno);
+commit;
+
+
+
+-- Sequence 예제
+CREATE SEQUENCE s_seq
+INCREMENT BY 1
+START WITH 1
+MAXVALUE 100;
+-- 1부터 시작해서 1씩 증가해서 최대 100까지 갈 수 있는 sequence 
+
+
+INSERT INTO dept (deptno, dname) VALUES (60, ''); -- 이렇게하면 '이대' 디폴트값 들어감 
+commit;
+
+DESC dept;
+
+-- alter 사용을 위한 테이블 생성
+
+CREATE TABLE address (
+             id     number(3),
+             name   varchar2(50),
+             addr   varchar2(100),
+             phone  varchar2(30),
+             email  varchar2(100)
+             );
+
+-- 샘플 데이터 삽입
+INSERT INTO address
+VALUES (1, 'HGDong', 'SEOUL', '111-333', 'gdhong@naver.com');
+       
+
+-- 주소록 테이블에 날짜타입 가지는 birth 칼럼 추가
+ALTER TABLE address
+ADD birth DATE;
+commit;
+
+-- addr_second 테이블로 복사 
+CREATE TABLE addr_second(id, name, addr, phone, e_mail, birth)
+AS SELECT * FROM address;
+
+-- id, name만 복사한 addr_fourth
+CREATE TABLE addr_fourth(id, name)
+AS SELECT id, name FROM address
+WHERE 1 = 2; -- 1 0이라고하든 뭐든 같지않게 입력하면 구조만 복사됨
+
+
+-- id, name만 복사한 addr_fourth
+CREATE TABLE addr_third(id, name)
+AS SELECT id, name FROM address;
+-- 값 까지 복사
+
+-- address 에 comment 컬럼 추가
+ALTER TABLE address
+ADD (comments VARCHAR2(200) DEFAULT 'No comments');
+
+-- 만든 컬럼 삭제
+ALTER TABLE address
+      DROP COLUMN comments;
+
+-- 만든 컬럼의 저장형식 변경하기(바이트수 줄잉기)
+ALTER TABLE address
+      MODIFY phone VARCHAR2(50);
+-- 사이즈를 50바이트로 변경
+
+-- 만약 기존에 있는 데이터 저장값보다도 적게 바이트수를 줄이면
+ALTER TABLE address
+      MODIFY phone VARCHAR(5);
+      -- 에러 발생(cannot decrease ... value too big)
+      
+      
+-- 테이블 이름 변경하기 rename 예제
+RENAME addr_second TO client_address;
+
+
+-- DROP TABLE: 기존 테이블과 데이터를 모두 삭제(구조, 데이터 모두)
+DROP TABLE addr_third ;
+commit;
+-- DELETE와의 차이점: DELETE는 데이터만 날아감 
+
+DELETE client_address; -- 데이터만 날아감 
+
+-- 자르는 기능을 하는 TRUNCATE 
+TRUNCATE TABLE client_address;
+-- 자른다음 자른 데이터를 버림 Rollback 해도 되돌아오지 않음
+
+
+-- COMMENT(주석/필드 설명) 넣기
+COMMENT ON TABLE address
+IS '고객 주소록을 관리';
+-- 테이블 편집의 '설명' 탭에 가면 정보 나옴 
+
+-- column에 대한 설명도 가능 
+COMMENT ON COLUMN address.name
+IS '고객 이름';
+
+
+SELECT table_name FROM user_tables;
+-- 로그인한 계정에서 생성된 테이블들의 이름 
+
+SELECT owner, table_name FROM all_tables;
+-- SYS, SYSTEM 등이 오너로 있음. 전체사용자 관련된 뷰
+
+SELECT owner, table_name FROM DBA_tables;
+-- DBA와 관련된 테이블 조회 가능 
+
