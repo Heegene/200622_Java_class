@@ -471,8 +471,9 @@ GROUP BY job;
 
 
 -- 4. comm이 null이 아닌 사람의 부서코드별 급여합계,최대급여,인원수[emp Table]
-SELECT deptno, SUM(sal), MAX(sal), COUNT(comm)
+SELECT deptno, SUM(sal), MAX(sal), COUNT(*)
 FROM emp
+WHERE comm IS NOT NULL
 GROUP BY deptno;
 
 
@@ -486,7 +487,7 @@ GROUP BY deptno;
 SELECT e.deptno, d.LOC, SUM(e.sal), MAX(e.sal), COUNT(*)
 FROM emp e, dept d
 WHERE e.deptno = d.deptno
-GROUP BY (e.deptno, d.LOC)
+GROUP BY e.deptno, d.LOC
 ORDER BY e.deptno;
 
 
