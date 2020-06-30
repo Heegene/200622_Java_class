@@ -339,6 +339,7 @@ CREATE TABLE sugang
       -- primary 가 복합키인 경우 별도로 잡아줌 
       CONSTRAINT PK_sugang PRIMARY KEY(studno, subno)
       );
+      commit;
           
-          
+         
           
