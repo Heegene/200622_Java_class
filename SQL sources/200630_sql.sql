@@ -318,3 +318,27 @@ SELECT owner, table_name FROM all_tables;
 SELECT owner, table_name FROM DBA_tables;
 -- DBA와 관련된 테이블 조회 가능 
 
+
+
+-- 제약조건 부여
+CREATE TABLE subject (
+              subno   NUMBER(5)    CONSTRAINT pk_subjectno PRIMARY KEY,
+              subname VARCHAR2(20) CONSTRAINT subjectname_nn NOT NULL, -- null값 입력불가
+              term    VARCHAR2(1)  CONSTRAINT subject_term_check CHECK(term in ('1','2')) , -- 1,2만 입력가능
+              type    VARCHAR(1)
+              );
+
+
+CREATE TABLE sugang
+     (
+      studno    NUMBER(5) CONSTRAINT FK_sugang_studno REFERENCES student(studno), 
+      -- 부모키로 student의 studno를 삼겠다(그러면 student의 studno 없으면 입력불가)
+      subno     NUMBER(5) CONSTRAINT FK_sugang_subno  REFERENCES subject(subno),
+      regdate   DATE,
+      result    NUMBER(3),
+      -- primary 가 복합키인 경우 별도로 잡아줌 
+      CONSTRAINT PK_sugang PRIMARY KEY(studno, subno)
+      );
+          
+          
+          
