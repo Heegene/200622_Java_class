@@ -46,6 +46,13 @@ SELECT empno, ename, job
 FROM emp
 WHERE deptno = 20;
 
+--6. emp10에 emp tbl의 20번 부서 데이터 추가 (2번째 방식)
+INSERT 
+INTO emp10 
+SELECT empno, ename, job
+FROM emp
+WHERE deptno = 20;
+
 
 
 
@@ -53,7 +60,8 @@ WHERE deptno = 20;
 -- ( EmpNo, e.Ename, e.Job,  d.dname, d.loc)
 CREATE TABLE emp_dept
 AS SELECT e.empno, e.ename, e.job, d.dname, d.loc
-FROM emp e, dept d;
+FROM emp e, dept d
+WHERE e.deptno = d.deptno;
 
 
 
