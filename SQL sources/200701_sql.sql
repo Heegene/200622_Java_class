@@ -95,3 +95,31 @@ CREATE OR REPLACE VIEW v_prof_avg_sal AS
 SELECT deptno, AVG(sal) AS avg_sal, SUM(sal) AS sum_sal
 FROM professor
 GROUP BY deptno;
+
+
+-- view 삭제
+DROP VIEW v_stud_dept102;
+
+-- VIEW 입력이 되지 않는 사례
+CREATE OR REPLACE VIEW dept_view
+AS
+SELECT dname, loc
+FROM dept;
+
+-- 이렇게 만들고 dept 테이블에 null X인 필드를 null로 해서 입력하면 에러발생
+-- 원래 테이블에서 not null 설정되어있는거에 insert를 null 포함해서 커밋 불가
+
+
+-- VIEW 입력이 되지 않는 사례 2
+CREATE OR REPLACE VIEW dept_view2
+AS
+SELECT deptno, dname, loc
+FROM dept
+WHERE deptno = 10
+WITH CHECK OPTION;
+-- 이렇게 만든 테이블에 deptno 를 70번으로 해서 인서트하려고 하면
+-- WHERE 조건에 violation이 됨 (WHERE 절의 조건을 check하므로 10이 아니면 입력불가)
+
+
+
+
