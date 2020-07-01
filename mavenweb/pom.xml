@@ -18,17 +18,28 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-<!-- 메이븐 plugin 에러나서 삽입한 dependency절 -->
+			<!-- 메이븐 plugin 에러나서 삽입한 dependency절 -->
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-resources-plugin</artifactId>
 			<version>2.4.3</version>
 		</dependency>
+
+		<!-- jspl 삽입 -->
 		<dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>3.1.0</version>
-        <scope>provided</scope>
-    </dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+
+
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
 
 	</dependencies>
 	<build>

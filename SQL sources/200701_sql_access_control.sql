@@ -82,8 +82,79 @@ REVOKE SELECT ON professor FROM hr_clerk;
 
 SELECT deptno, dname, college
 FROM department
-START WITH deptno = 10
+START WITH deptno = 10 -- dept 10번부터 시작하되
+CONNECT BY PRIOR deptno = college;
+-- 자식을 내걸고 부모를 나중에
+-- college에 들어있는 값이 deptno에 들어있다면 그게 부모
+
+
+-- 계층적 질의문 사용하여 부서 테이블에서 학과, 학부 , 단과대학 검색하여
+-- 학과, 학번, 단대 순으로bottom up 형태로 출력
+-- 시작데이터 102번
+
+SELECT deptno, dname, college
+FROM department
+START WITH deptno = 102
+CONNECT BY PRIOR college = deptno;
+-- bottom up이니까 거꾸로 기재하면 됨 
+
+
+-- 계층적 질의문 사용하여 부서 테이블에서 부서 이름 검색하여
+-- 단대, 학부 , 학과순 top-down 형식으로 출력
+-- 단 시작 데이터는 '공과대학'이고 각 레벨별로 우측으로 2칸 이동 출력
+
+SELECT LEVEL, LPAD(' ', (Level-1)*2) || dname AS 조직도
+FROM department
+START WITH dname = '공과대학'
 CONNECT BY PRIOR deptno = college;
 
+-- LEVEL이라고 의사 열이 있음 루트 노드, 루트 노드의 자식 노드, 그 자식 이렇게
+-- depth가 있음
 
 
+CREATE TABLE DEP (
+     DEP_CD NUMBER NOT NULL, -- 부서코드
+     PARENT_CD NUMBER, -- 상위부서 코드
+     DEPT_NAME VARCHAR2(100) NOT NULL, -- 부서이름
+     PRIMARY KEY (DEP_CD)
+);
+
+INSERT INTO DEP VALUES ( 101, NULL, '총괄개발부');
+INSERT INTO DEP VALUES ( 102, 101, '모바일개발센터');
+INSERT INTO DEP VALUES ( 103, 101, '웹개발센터');
+INSERT INTO DEP VALUES ( 104, 101, '시스템개발센터');
+
+INSERT INTO DEP VALUES ( 105, 102, '쇼핑몰(모바일)');
+INSERT INTO DEP VALUES ( 106, 103, '외주SI');
+INSERT INTO DEP VALUES ( 107, 103, '쇼핑몰');
+INSERT INTO DEP VALUES ( 108, 105, '전산지원팀');
+INSERT INTO DEP VALUES ( 109, 106, '구축1팀');
+INSERT INTO DEP VALUES ( 100, 106, '구축2팀');
+INSERT INTO DEP VALUES ( 111, 104, 'ERP시스템');
+
+SELECT LPAD(' ', (level-1*2)) || dept_name AS 조직도,
+dep_cd, parent_cd, level
+FROM dep
+START WITH parent_cd IS NULL
+CONNECT BY PRIOR dep_cd = parent_cd;
+
+
+
+
+-- 계층적 질의문을 사용하여 부서 테이블에서 dname을
+-- 단대, 학부, 학과순으로 top-down 형식으로 출력
+-- 단 정보미디어학부 제외 출력
+
+SELECT deptno, college, dname, loc
+FROM department
+WHERE dname != '정보미디어학부'
+START WITH college is null
+CONNECT BY PRIOR deptno = college;
+
+-- 정보미디어학부 전체를 다 날리고싶을때(하위 포함)
+
+SELECT deptno, college, dname, loc
+FROM department
+START WITH college is null
+CONNECT BY PRIOR deptno = college
+AND dname != '정보미디어학부';
