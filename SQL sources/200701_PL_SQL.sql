@@ -22,3 +22,4 @@ PRINT a -- a출력
 
 -- 사용방법 2
 SELECT name, tax(2000000), sal from emp;
+

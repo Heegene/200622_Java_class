@@ -11,3 +11,4 @@ BEGIN
 		v_tax := v_num * 0.07 ; -- v_tax = v_num*0.07 이랑 같은뜻 
 
 END ;   -- v_tax 값을 리턴하라
+
