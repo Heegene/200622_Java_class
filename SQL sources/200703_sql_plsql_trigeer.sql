@@ -66,10 +66,10 @@ CREATE OR REPLACE TRIGGER emp_row_aud
 BEGIN
     IF INSERTING THEN
       INSERT INTO emp_row_audit
-      VALUES (emp_row_seq.NEXTVAL, :old.ename, 'inserting', sysdate);
+      VALUES (emp_row_seq.NEXTVAL, :new.ename, 'inserting', sysdate);
     ELSIF UPDATING THEN
       INSERT INTO emp_row_audit
-      VALUES (emp_row_sseq.NEXTVAL, :old.ename, 'updating', sysdate);
+      VALUES (emp_row_seq.NEXTVAL, :old.ename, 'updating', sysdate);
     ELSIF DELETING THEN
       INSERT INTO emp_row_audit
       VALUES (emp_row_seq.NEXTVAL, :old.ename, 'deleting', sysdate);
@@ -78,3 +78,88 @@ END;
 
 
 
+-- 패키지 생성
+-- 1. 패키지 선언부 
+CREATE OR REPLACE PACKAGE emp_info AS 
+    PROCEDURE all_emp_info; -- 모든 사원의 정보
+END emp_info;
+
+-- 2. 패키지 body 정의
+CREATE OR REPLACE PACKAGE BODY emp_info AS
+-- 모든 사원의 사원 정보
+--
+    PROCEDURE all_emp_info
+    
+    IS
+    
+        CURSOR emp_view IS
+        SELECT ename, hiredate, empno
+        FROM emp;
+
+ 
+          BEGIN
+          DBMS_OUTPUT.ENABLE;
+          
+          FOR emp_list IN emp_view LOOP
+          DBMS_OUTPUT.PUT_LINE('이름 : ' || emp_list.ename);
+          DBMS_OUTPUT.PUT_LINE('입사일 : ' || emp_list.hiredate);
+          DBMS_OUTPUT.PUT_LINE('사번 : ' || emp_list.empno);
+        
+        END LOOP;
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE(SQLERRM||'에러발생');
+  
+    
+    END all_emp_info;
+END emp_info;
+
+
+EXEC EMP_INFO.ALL_EMP_INFO();
+
+
+-- 패키지 생성 예제 2
+-- 이렇게 적어놨으면 저 두개의 프로시저도 나중에 정의해줘야 함 
+CREATE OR REPLACE PACKAGE emp_info AS
+    PROCEDURE all_emp_info;
+    PROCEDURE all_sal_info;
+END emp_info;
+
+
+-- all_sal_info는 미리 구현 안해뒀으므로 프로시저 구현해야함
+-- 전체급여평균, 최대급여금액, 최소급여금액  그룹함수 이용
+
+CREATE OR REPLACE PACKAGE BODY emp_info AS
+PROCEDURE all_sal_info
+  
+IS
+  
+  CURSOR sal_view IS
+      SELECT AVG(sal) AS avg, MAX(sal) AS max, MIN(sal) AS min
+      FROM emp;
+      
+  BEGIN
+      DBMS_OUTPUT.ENABLE;
+      
+      FOR sal_list IN sal_view LOOP
+      DBMS_OUTPUT.PUT_LINE('평균 ' || sal_list.avg);
+      DBMS_OUTPUT.PUT_LINE('최대급여 ' || sal_list.max);
+      DBMS_OUTPUT.PUT_LINE('최소급여 ' || sal_list.min);
+      
+      END LOOP;
+  
+  EXCEPTION
+    WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE(SQLERRM||'에러발생');
+  
+  END all_sal_info;
+  
+  END emp_info;
+  
+  
+-- 특정 부서의 사원 정보 프로시저 생성
+
+
+
+-
+  
