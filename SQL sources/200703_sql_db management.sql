@@ -8,3 +8,9 @@ CREATE OR REPLACE Directory mdBackUp2 AS 'C:\Java Programming\orabackup';
 
 GRANT READ, WRITE ON DIRECTORY mdBackUP2 TO scott3;
 -- 백업 디렉토리의 읽기 쓰기권한 스캇3에게 부여
+
+
+-- 테이블스페이스 생성 
+CREATE TABLESPACE user1 datafile 'C:\Java Programming\tablespace\user1.ora' size 100m;
+CREATE TABLESPACE user2 datafile 'C:\Java Programming\tablespace\user2.ora' size 100m;
+CREATE TABLESPACE user3 datafile 'C:\Java Programming\tablespace\user3.ora' size 100m;
