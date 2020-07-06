@@ -17,6 +17,7 @@
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<!-- 메이븐 plugin 에러나서 삽입한 dependency절 -->
 			<groupId>org.apache.maven.plugins</groupId>
@@ -30,9 +31,6 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
-
-
-
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
