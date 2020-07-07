@@ -26,14 +26,17 @@ END KK_COLLECTION_PKG;
 
 -------------------------------------------------------------------------
 -- 패키지 body 내용 
-CREATE OR REPLACE PACKAGE BODY KK_COLLECTION_PKG AS
-  PROCEDURE KK_COLLECTION_MAIN ( p_sum_yymm in VARCHAR2,
+create or replace PACKAGE BODY KK_COLLECTION_PKG AS
+
+
+PROCEDURE KK_COLLECTION_MAIN ( p_sum_yymm in VARCHAR2,
                                  p_regi_emp_no in VARCHAR2)
 
 IS
 
 
 BEGIN
+  DBMS_OUTPUT.ENABLE;
   DELETE MMSUM30 
   WHERE sum_yymm = p_sum_yymm; -- 기초 기말에 그 달의 정보 초기화시켜놓고 시작
   
@@ -42,12 +45,10 @@ BEGIN
   WHERE SUBSTR(yymmdd,1,6) = p_sum_yymm;
   
   --일자별 제품별 판매현황(SMProd10) 정보 해당월 삭제
-  DBMS.OUTPUT.ENABLE;
   dbms_output.put_line('KK_COLLECTION_PRC1 Before p_sum_yymm => ' || p_sum_yymm);
   KK_COLLECTION_PRC1(p_sum_yymm);
   
-  COMMIT;
-  
+ 
   
 END KK_COLLECTION_MAIN;
   
@@ -59,7 +60,7 @@ PROCEDURE KK_COLLECTION_PRC1 (p_sum_yymm in VARCHAR2)
 IS
 
 BEGIN
-  DBMS.OUTPUT.ENABLE;
+  DBMS_OUTPUT.ENABLE;
   dbms_output.put_line(' KK_COLLECTION_PRC1 p_sum_yymm => ' || p_sum_yymm);
     INSERT INTO mmsum30
     
@@ -85,9 +86,10 @@ BEGIN
       AND     item_gubn = '1'  -- 기말
       );
 
+
 END KK_COLLECTION_PRC1;
 
-
+END KK_COLLECTION_PKG;
 
 
   
