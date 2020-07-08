@@ -7,7 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<% 
+	  <% 
 		response.sendRedirect("redirect02.jsp");
 	   %>
 	   
