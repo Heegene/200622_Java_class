@@ -13,6 +13,7 @@ public class OraUpdate {
 	// 여기서 127.0.0.1을 localhost로 변경해줘도 됨 1521 -> 포트번호 xe => service id(sid)
 	private static final String user = "scott";
 	private static final String passwd = "tiger";
+	private static String driver = "oracle.jdbc.driver.OracleDriver";
 	public static void main(String[] args) throws SQLException {
 		Scanner sc = new Scanner(System.in);
 		
@@ -24,7 +25,6 @@ public class OraUpdate {
 		String loc = sc.nextLine();
 		
 		
-		String driver = "oracle.jdbc.driver.OracleDriver";
 		String sql = String.format("UPDATE dept SET dname = '%s'," + "loc = '%s' WHERE deptno=%s", dname, loc, deptno);
 		Connection conn = DriverManager.getConnection(url, user, passwd);
 		Statement stmt = conn.createStatement();
