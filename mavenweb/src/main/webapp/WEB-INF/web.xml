@@ -4,4 +4,14 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  <servlet>
+  	<servlet-name>FrontServlet</servlet-name>
+  	<display-name>FrontServlet</display-name>
+  	<description></description>
+  	<servlet-class>examples.FrontServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>FrontServlet</servlet-name>
+  	<url-pattern>/front</url-pattern>
+  </servlet-mapping>
 </web-app>
