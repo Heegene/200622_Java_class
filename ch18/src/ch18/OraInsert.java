@@ -8,6 +8,8 @@ import java.util.Scanner;
 
 public class OraInsert {
 	private static final String url = "jdbc:oracle:thin:@127.0.0.1:1521:xe";
+	//	private static final String url = "jdbc:oracle:thin:@172.30.1.27:1521:xe";
+	// 본인 ip주소 쳐도됨 
 	// 여기서 127.0.0.1을 localhost로 변경해줘도 됨 1521 -> 포트번호 xe => service id(sid)
 	private static final String user = "scott";
 	private static final String passwd = "tiger";
