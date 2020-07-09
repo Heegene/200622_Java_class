@@ -21,6 +21,7 @@ public class OraProc3 {
 		Connection conn = null;
 		CallableStatement cs = null;
 		String sql = "{? = call fc_update_sal(?)";
+		// (?)는 parameter이고, 앞의 ?는 function은 무언가를 리턴하므로 그 return값을 받아오는쪽 
 		
 		try {
 			Class.forName(driver);
@@ -35,6 +36,7 @@ public class OraProc3 {
 			
 			
 			if (sal > 0 ) {
+				System.out.println(sal);
 				System.out.println("callable statement 수정 성공");
 			}
 			else {
