@@ -2,6 +2,7 @@ package robot;
 
 import robot.actions.FireOk;
 import robot.actions.FlyOk;
+import robot.actions.KnifeWithLazer;
 
 public class SuperRobot extends Robot {
 
@@ -9,6 +10,7 @@ public class SuperRobot extends Robot {
 		// TODO Auto-generated constructor stub
 		flyAction = new FlyOk();
 		fireAction = new FireOk();
+		knifeAction = new KnifeWithLazer();
 		
 	}
 

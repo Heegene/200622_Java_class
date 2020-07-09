@@ -11,6 +11,7 @@ public class MainClass {
 		sr.actionBasic();
 		sr.actionFly();
 		sr.actionFire();
+		sr.knifeAction();
 		
 		System.out.println("---------------------------");
 		System.out.println("standardrobot 주문");
@@ -20,6 +21,7 @@ public class MainClass {
 		st.actionBasic();
 		st.actionFly();
 		st.actionFire();
+		st.knifeAction();
 		
 		System.out.println("-----------------------------");
 		System.out.println("cheap robot 주문");
@@ -30,6 +32,8 @@ public class MainClass {
 		cr.actionBasic();
 		cr.actionFly();
 		cr.actionFire();
+		cr.knifeAction();
+		
 		
 		System.out.println("-----------------------");
 		
